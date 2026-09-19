@@ -82,7 +82,7 @@ export default function Home() {
               className="bg-white dark:bg-slate-900 rounded-xl overflow-hidden shadow-sm border border-slate-200 dark:border-slate-800 hover:shadow-md transition"
             >
               <div className="relative w-full h-48">
-                <Image
+                <Image sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
                   src={property.image}
                   alt={property.title}
                   fill
