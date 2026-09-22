@@ -1,8 +1,12 @@
+// types/auth.types.ts
+
+import { Role } from "./user.types";
+
 export type LoginState = {
   success: boolean;
-  statusCode?: number; 
+  statusCode?: number;
   message: string;
-  data?: {             
+  data?: {
     accessToken: string;
     refreshToken: string;
   };
@@ -18,7 +22,7 @@ export type RegisterState = {
       id: string;
       name: string;
       email: string;
-      role: "TENANT" | "LANDLORD";
+      role: Extract<Role, "TENANT" | "LANDLORD">; 
     };
   };
 } | null;

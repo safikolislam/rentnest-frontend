@@ -18,7 +18,7 @@ const RegistrationForm = () => {
     if (!state) return;
     if (state.success) {
       toast.success(state.message || "Registration successful");
-      router.push("api/auth/login");
+      router.push("/");
     } else {
       toast.error(state.message || "Registration failed");
     }
