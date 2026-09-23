@@ -9,23 +9,25 @@ import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 
 
+
+
 const LoginForm = () => {
 
   const [state,action,pending] = useActionState(loginAction,null)
-const router = useRouter()
+ const router = useRouter()
  useEffect(()=>{
   if(!state) return;
   if(state.success){
    toast.success(state.message || "Login successful");
    router.refresh();
-   router.push("/")
+  //  router.push("/")
    
  
   }
   if(!state.success){
     toast.error(state.message || "Login failed")
   }
- },[state,router])
+ },[state])
  
  
  

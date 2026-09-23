@@ -16,18 +16,24 @@ const RegistrationForm = () => {
 
   useEffect(() => {
     if (!state) return;
+
     if (state.success) {
       toast.success(state.message || "Registration successful");
-      router.push("/");
+      
+   
+      router.refresh(); 
+
+      router.push(`/dashboard/${role}`);
+
+
     } else {
       toast.error(state.message || "Registration failed");
     }
-  }, [state, router]);
+  }, [state, router, role]);
 
   return (
     <form action={action} className="space-y-4">
       <Card className="p-6 space-y-4">
-     
         <div className="flex gap-2">
           <button
             type="button"
@@ -48,14 +54,14 @@ const RegistrationForm = () => {
             Landlord
           </button>
         </div>
-     
+
         <input type="hidden" name="role" value={role} />
 
         <Input name="name" type="text" placeholder="Enter Your Name" required />
         <Input name="email" type="email" placeholder="Enter Your Email" required />
         <Input name="password" type="password" placeholder="Enter Your Password" required />
 
-        <Button type="submit" className="w-full">
+        <Button type="submit" disabled={pending} className="w-full">
           {pending ? "Submitting..." : "Register"}
         </Button>
       </Card>

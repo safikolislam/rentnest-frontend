@@ -1,13 +1,16 @@
 "use server";
 
+import jwt, { JwtPayload } from "jsonwebtoken";
 import { LoginState, RegisterState } from "@/lib/types";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
-export const loginAction = async (prevState: LoginState, formData: FormData) => {
+export const loginAction = async (prevState: LoginState, formData: FormData): Promise<LoginState> => {
   const email = formData.get("email");
   const password = formData.get("password");
 
   const payload = { email, password };
+  let redirectPath = ""; 
 
   try {
     const res = await fetch(`${process.env.API_URL}/api/auth/login`, {
@@ -42,18 +45,43 @@ export const loginAction = async (prevState: LoginState, formData: FormData) => 
           path: "/",
         });
       }
+
+ 
+      if (result.data.accessToken) {
+        const decodedToken = jwt.decode(result.data.accessToken) as JwtPayload;
+
+        if (decodedToken?.role === "TENANT") {
+          redirectPath = "/dashboard/tenant";
+        } else if (decodedToken?.role === "LANDLORD") {
+          redirectPath = "/dashboard/landlord";
+        } else if (decodedToken?.role === "ADMIN") {
+          redirectPath = "/dashboard/admin";
+        }
+      }
     }
 
-    return result;
+    if (!redirectPath) {
+      return result;
+    }
   } catch (error) {
     return {
       success: false,
       message: "Server connection failed!",
     };
   }
+
+
+  if (redirectPath) {
+    redirect(redirectPath);
+  }
+
+  return {
+    success: true,
+    message: "Login successful!",
+  };
 };
 
-export const registerAction = async (prevState: RegisterState, formData: FormData) => {
+export const registerAction = async (prevState: RegisterState, formData: FormData): Promise<RegisterState> => {
   const name = formData.get("name");
   const email = formData.get("email");
   const password = formData.get("password");
@@ -64,7 +92,6 @@ export const registerAction = async (prevState: RegisterState, formData: FormDat
   const registerPayload = { name, email, password, role };
 
   try {
-   
     const res = await fetch(`${process.env.API_URL}/api/auth/register`, {
       method: "POST",
       headers: {
@@ -75,7 +102,6 @@ export const registerAction = async (prevState: RegisterState, formData: FormDat
 
     const result: RegisterState = await res.json();
 
-  
     if (result?.success) {
       const loginPayload = { email, password };
 
@@ -89,7 +115,6 @@ export const registerAction = async (prevState: RegisterState, formData: FormDat
 
       const loginResult = await loginRes.json();
 
-    
       if (loginResult?.success && loginResult?.data) {
         const cookieStore = await cookies();
 
