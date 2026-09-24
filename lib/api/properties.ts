@@ -1,4 +1,4 @@
-import { PropertiesResponse, SinglePropertyResponse } from "../types/property";
+import { PropertiesResponse, SinglePropertyResponse } from "../types/property.types";
 
 
 export async function getProperties(searchParams?: URLSearchParams): Promise<PropertiesResponse> {

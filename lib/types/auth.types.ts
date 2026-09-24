@@ -1,4 +1,4 @@
-// types/auth.types.ts
+
 
 import { Role } from "./user.types";
 

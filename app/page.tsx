@@ -1,6 +1,6 @@
 
 import Hero from "@/components/Hero";
-import { PropertiesResponse, Property } from "@/lib/types/property";
+import { PropertiesResponse, Property } from "@/lib/types/property.types";
 import Image from "next/image";
 import Link from "next/link";
 ;

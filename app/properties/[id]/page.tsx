@@ -1,6 +1,7 @@
 import { getPropertyById } from "@/lib/api/properties";
 import Image from "next/image";
 import { MapPin, Mail } from "lucide-react";
+import RequestRentalButton from "@/components/property/RequestRentalButton";
 
 type PageProps = {
   params: Promise<{ id: string }>;
@@ -67,9 +68,7 @@ const PropertyDetailsPage = async ({ params }: PageProps) => {
             ৳{property.price.toLocaleString()}
             <span className="text-sm font-normal text-muted-foreground"> /month</span>
           </p>
-          <button className="w-full bg-primary text-primary-foreground py-2.5 rounded-lg font-medium">
-            Request to Rent
-          </button>
+      <RequestRentalButton propertyId= {property.id} ></RequestRentalButton>
         </div>
       </div>
     </div>

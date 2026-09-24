@@ -2,7 +2,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { MapPin } from "lucide-react";
-import { Property } from "@/lib/types/property";
+import { Property } from "@/lib/types/property.types";
 
 
 const PropertyCard = ({ property }: { property: Property }) => {
