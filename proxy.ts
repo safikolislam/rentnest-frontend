@@ -5,10 +5,7 @@ import { NextResponse } from "next/server";
 import { getNewAccessToken } from "./service/refreshToken";
 import { jwtUtils } from "./utils/jwt";
 
-
 const AUTH_ROUTES = ["/auth/login", "/auth/register"];
-
-
 const PUBLIC_ROUTES = ["/", "/properties"];
 
 export async function proxy(request: NextRequest) {
@@ -26,11 +23,10 @@ export async function proxy(request: NextRequest) {
     ? jwtUtils.verifyToken(refreshToken, process.env.JWT_REFRESH_SECRET as string)
     : null;
 
-
   if (!decodedAccessToken?.success && decodedRefreshToken?.success) {
     const result = await getNewAccessToken();
 
-    if (result.success) {
+    if (result?.success) {
       const newAccessToken = result.data.accessToken;
 
       cookieStore.set("accessToken", newAccessToken, {
@@ -50,16 +46,18 @@ export async function proxy(request: NextRequest) {
   let userRole: string | null = null;
 
   if (!decodedAccessToken?.success) {
-  
     cookieStore.delete("accessToken");
   }
 
   if (decodedAccessToken?.success && decodedAccessToken.data) {
-    userRole = (decodedAccessToken.data as JwtPayload).role;
+    const decodedData = decodedAccessToken.data as JwtPayload;
+  
+    const rawRole = decodedData?.role || decodedData?.user?.role || "";
+    userRole = typeof rawRole === "string" ? rawRole.toUpperCase() : null;
   }
 
- 
-  if (accessToken && AUTH_ROUTES.includes(pathname)) {
+
+  if (accessToken && userRole && AUTH_ROUTES.includes(pathname)) {
     if (userRole === "TENANT") {
       return NextResponse.redirect(new URL("/dashboard/tenant", request.url));
     } else if (userRole === "LANDLORD") {
@@ -83,7 +81,7 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL("/auth/login", request.url));
   }
 
-
+ 
   if (pathname.startsWith("/dashboard/tenant") && userRole !== "TENANT") {
     return NextResponse.redirect(new URL("/", request.url));
   } else if (pathname.startsWith("/dashboard/landlord") && userRole !== "LANDLORD") {
