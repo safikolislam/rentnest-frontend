@@ -43,7 +43,7 @@ export function Navbar({ user }: NavbarProps) {
 
   const [isOpen, setIsOpen] = useState(false);
 
-  // Safe data extraction
+ 
   const profileData = user?.data?.profile;
   const role = profileData?.role;
 
