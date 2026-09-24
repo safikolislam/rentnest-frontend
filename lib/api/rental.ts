@@ -1,18 +1,39 @@
+"use server";
+
 import { cookies } from "next/headers";
-import { MyRentalRequestsResponse } from "../types";
 
 
-export async function getMyRentalRequests(): Promise<MyRentalRequestsResponse> {
+
+
+
+export async function getMyRentalRequests() {
   const cookieStore = await cookies();
   const token = cookieStore.get("accessToken")?.value;
 
-  const res = await fetch(`${process.env.API_URL}/api/rentals`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    cache: "no-store",
-  });
+  if (!token) {
+    console.error("No access token found in cookies");
+    return { success: false, data: [] };
+  }
 
-  if (!res.ok) throw new Error("Failed to fetch rental requests");
-  return res.json();
+  try {
+    const res = await fetch(`${process.env.API_URL}/api/rentals`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      cache: "no-store", 
+    });
+
+    if (!res.ok) {
+      console.error(`getMyRentalRequests Failed Status: ${res.status}`);
+      return { success: false, data: [] };
+    }
+
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching tenant requests:", error);
+    return { success: false, data: [] };
+  }
 }

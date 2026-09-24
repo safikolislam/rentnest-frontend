@@ -100,3 +100,36 @@ export type UpdateRequestStatusResponse = {
     [key: string]: unknown;
   };
 };
+
+
+
+
+
+export interface RentalRequest {
+  id: string;
+  status: "PENDING" | "APPROVED" | "REJECTED" | "ACTIVE" | "COMPLETED";
+  rentPeriod: number;
+  property: {
+    id: string;
+    title: string;
+    location: string;
+    price: number;
+    images: string[];
+  };
+}
+
+export interface GetRentalRequestsResponse {
+  success: boolean;
+  statusCode?: number;
+  message?: string;
+  data: RentalRequest[];
+}
+
+export interface GetRentalRequestResponse {
+  success: boolean;
+  statusCode?: number;
+  message?: string;
+  data: RentalRequest | null;
+}
+
+

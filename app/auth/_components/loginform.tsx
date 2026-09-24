@@ -27,7 +27,7 @@ const LoginForm = () => {
   if(!state.success){
     toast.error(state.message || "Login failed")
   }
- },[state])
+ },[state,router])
  
  
  
