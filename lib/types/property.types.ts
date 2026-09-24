@@ -43,3 +43,29 @@ export type SinglePropertyResponse = {
   message: string;
   data: Property;
 };
+
+
+export type CreatePropertyPayload = {
+  title: string;
+  description: string;
+  location: string;
+  price: number;
+  categoryId: string;
+  amenities: string[];
+  images: string[];
+};
+
+export type UpdatePropertyPayload = Partial<CreatePropertyPayload>;
+
+export type PropertyMutationResponse = {
+  success: boolean;
+  statusCode: number;
+  message: string;
+  data?: Property;
+};
+
+export type DeletePropertyResponse = {
+  success: boolean;
+  statusCode: number;
+  message: string;
+};
