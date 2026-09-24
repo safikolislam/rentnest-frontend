@@ -14,10 +14,19 @@ export async function getProperties(searchParams?: URLSearchParams): Promise<Pro
 }
 
 export async function getPropertyById(id: string): Promise<SinglePropertyResponse> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/properties/${id}`, {
+  const res = await fetch(`${process.env.API_URL}/api/properties/${id}`, {
     cache: "no-store",
   });
 
   if (!res.ok) throw new Error("Failed to fetch property");
+  return res.json();
+}
+
+
+export async function getCategories() {
+  const res = await fetch(`${process.env.API_URL}/api/categories`, {
+    cache: "no-store",
+  });
+  if (!res.ok) throw new Error("Failed to fetch categories");
   return res.json();
 }
