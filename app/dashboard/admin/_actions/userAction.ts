@@ -17,7 +17,7 @@ export const updateUserStatus = async (
   }
 
   try {
-    const res = await fetch(`${process.env.API_URL}/api/admin/users/${userId}`, {
+    const res = await fetch(`${process.env.NEXT_API_URL}/api/admin/users/${userId}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
