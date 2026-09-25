@@ -1,4 +1,3 @@
-
 "use server";
 
 import { cookies } from "next/headers";
@@ -6,14 +5,19 @@ import { revalidatePath } from "next/cache";
 import { CreatePropertyPayload, DeletePropertyResponse, PropertyMutationResponse, UpdatePropertyPayload } from "@/lib/types";
 
 
+const getBackendUrl = () => {
+  return "https://rentnest-backend-chi.vercel.app/api";
+};
+
 export const createProperty = async (
   payload: CreatePropertyPayload
 ): Promise<PropertyMutationResponse> => {
   const cookieStore = await cookies();
   const token = cookieStore.get("accessToken")?.value;
+  const baseUrl = getBackendUrl();
 
   try {
-    const res = await fetch(`${process.env.NEXT_API_URL}/api/properties`, {
+    const res = await fetch(`${baseUrl}/properties`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -37,9 +41,12 @@ export const updateProperty = async (
 ): Promise<PropertyMutationResponse> => {
   const cookieStore = await cookies();
   const token = cookieStore.get("accessToken")?.value;
+  const baseUrl = getBackendUrl();
 
   try {
-    const res = await fetch(`${process.env.API_URL}/api/landlord/properties/${propertyId}`, {
+    
+    let url = `${baseUrl}/landlord/properties/${propertyId}`;
+    let res = await fetch(url, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -47,6 +54,19 @@ export const updateProperty = async (
       },
       body: JSON.stringify(payload),
     });
+
+  
+    if (res.status === 404) {
+      url = `${baseUrl}/properties/${propertyId}`;
+      res = await fetch(url, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+    }
 
     const result: PropertyMutationResponse = await res.json();
     if (result.success) revalidatePath("/dashboard/landlord/properties");
@@ -60,14 +80,26 @@ export const updateProperty = async (
 export const deleteProperty = async (propertyId: string): Promise<DeletePropertyResponse> => {
   const cookieStore = await cookies();
   const token = cookieStore.get("accessToken")?.value;
+  const baseUrl = getBackendUrl();
 
   try {
-    const res = await fetch(`${process.env.API_URL}/api/landlord/properties/${propertyId}`, {
+    let url = `${baseUrl}/landlord/properties/${propertyId}`;
+    let res = await fetch(url, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
+
+    if (res.status === 404) {
+      url = `${baseUrl}/properties/${propertyId}`;
+      res = await fetch(url, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    }
 
     const result: DeletePropertyResponse = await res.json();
     if (result.success) revalidatePath("/dashboard/landlord/properties");

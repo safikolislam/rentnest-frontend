@@ -1,19 +1,34 @@
+import React from 'react';
 import PropertiesClient from "@/components/landlord/PropertyClient";
 import { getMyProfile } from "@/lib/api/auth";
 import { getMyProperties } from "@/lib/api/landlordProperties";
 import { getCategories } from "@/lib/api/properties";
 
-
-const LandlordPropertiesPage = async () => {
+const PropertiesPageLandlord = async () => {
   const profile = await getMyProfile();
-  const landlordId = profile?.data?.profile?.id;
+
+  // সম্ভাব্য সব জায়গা থেকে আইডি খোঁজার চেষ্টা, না পেলে ফাকা স্ট্রিং দেওয়া হবে
+  const landlordId =
+    profile?.data?.id ||
+    profile?.data?.profile?.id ||
+    profile?.id ||
+    profile?.data?.userId ||
+    profile?.userId ||
+    "";
 
   const [{ data: properties }, { data: categories }] = await Promise.all([
-    getMyProperties(landlordId as string),
+    getMyProperties(landlordId),
     getCategories(),
   ]);
 
-  return <PropertiesClient initialProperties={properties} categories={categories} />;
+  return (
+    <div>
+      <PropertiesClient
+        initialProperties={properties || []}
+        categories={categories || []}
+      />
+    </div>
+  );
 };
 
-export default LandlordPropertiesPage;
+export default PropertiesPageLandlord;

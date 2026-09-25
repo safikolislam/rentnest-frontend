@@ -4,10 +4,10 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Plus, Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
+import Swal from "sweetalert2";
 import { Category, Property } from "@/lib/types";
 import { deleteProperty } from "@/app/dashboard/landlord/_actions/PropertyAction";
 import PropertyFormModal from "./PropertyFromModal";
-
 
 const PropertiesClient = ({
   initialProperties,
@@ -31,13 +31,24 @@ const PropertiesClient = ({
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this property?")) return;
-    const result = await deleteProperty(id);
-    if (result.success) {
-      toast.success("Property deleted");
-      router.refresh();
-    } else {
-      toast.error(result.message || "Failed to delete");
+    const swalResult = await Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!"
+    });
+
+    if (swalResult.isConfirmed) {
+      const result = await deleteProperty(id);
+      if (result.success) {
+        Swal.fire("Deleted!", "Property deleted successfully.", "success");
+        router.refresh();
+      } else {
+        Swal.fire("Error!", result.message || "Failed to delete", "error");
+      }
     }
   };
 
