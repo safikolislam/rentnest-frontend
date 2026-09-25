@@ -13,7 +13,7 @@ export const loginAction = async (prevState: LoginState, formData: FormData): Pr
   let redirectPath = ""; 
 
   try {
-    const res = await fetch(`${process.env.API_URL}/api/auth/login`, {
+    const res = await fetch(`${process.env.NEXT_API_URL}/api/auth/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -92,7 +92,7 @@ export const registerAction = async (prevState: RegisterState, formData: FormDat
   const registerPayload = { name, email, password, role };
 
   try {
-    const res = await fetch(`${process.env.API_URL}/api/auth/register`, {
+    const res = await fetch(`${process.env.NEXT_API_URL}/api/auth/register`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -105,7 +105,7 @@ export const registerAction = async (prevState: RegisterState, formData: FormDat
     if (result?.success) {
       const loginPayload = { email, password };
 
-      const loginRes = await fetch(`${process.env.API_URL}/api/auth/login`, {
+      const loginRes = await fetch(`${process.env.NEXT_API_URL}/api/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

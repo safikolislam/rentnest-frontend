@@ -7,7 +7,7 @@ import Link from "next/link";
 
 async function getFeaturedProperties(): Promise<Property[]> {
   try {
-    const res = await fetch(`${process.env.API_URL}/api/properties`, {
+    const res = await fetch(`${process.env.NEXT_API_URL}/api/properties`, {
       cache: "no-store",
     });
 

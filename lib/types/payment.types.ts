@@ -17,8 +17,7 @@ export interface GetPaymentsResponse {
 }
 
 export interface CreatePaymentPayload {
-  requestId: string;
-  amount: number;
+  rentalRequestId: string;
 }
 
 export interface CreatePaymentResponse {
@@ -26,6 +25,27 @@ export interface CreatePaymentResponse {
   statusCode?: number;
   message?: string;
   data?: {
-    gatewayUrl: string;
+    paymentUrl: string; 
   };
+}
+
+export interface IPayment {
+  id: string;
+  rentalId: string;
+  amount: number;
+  paymentMethod: string;
+  transactionId?: string;
+  status: "PENDING" | "COMPLETED" | "FAILED";
+  createdAt: string;
+  rental?: {
+    property?: {
+      title: string;
+    };
+  };
+}
+
+export interface IPaymentHistoryResponse {
+  success: boolean;
+  message?: string;
+  data: IPayment[];
 }

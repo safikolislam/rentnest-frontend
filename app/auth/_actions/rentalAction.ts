@@ -19,7 +19,7 @@ export const submitRentalRequest = async (
   }
 
   try {
-    const res = await fetch(`${process.env.API_URL}/api/rentals`, {
+    const res = await fetch(`${process.env.NEXT_API_URL}/api/rentals`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

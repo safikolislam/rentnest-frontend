@@ -3,7 +3,7 @@ import { PropertiesResponse, SinglePropertyResponse } from "../types/property.ty
 
 export async function getProperties(searchParams?: URLSearchParams): Promise<PropertiesResponse> {
   const query = searchParams?.toString();
-  const url = `${process.env.API_URL}/api/properties${query ? `?${query}` : ""}`;
+  const url = `${process.env.NEXT_API_URL}/api/properties${query ? `?${query}` : ""}`;
 
   const res = await fetch(url, {
     cache: "no-store",
@@ -14,7 +14,7 @@ export async function getProperties(searchParams?: URLSearchParams): Promise<Pro
 }
 
 export async function getPropertyById(id: string): Promise<SinglePropertyResponse> {
-  const res = await fetch(`${process.env.API_URL}/api/properties/${id}`, {
+  const res = await fetch(`${process.env.NEXT_API_URL}/api/properties/${id}`, {
     cache: "no-store",
   });
 
@@ -24,7 +24,7 @@ export async function getPropertyById(id: string): Promise<SinglePropertyRespons
 
 
 export async function getCategories() {
-  const res = await fetch(`${process.env.API_URL}/api/categories`, {
+  const res = await fetch(`${process.env.NEXT_API_URL}/api/categories`, {
     cache: "no-store",
   });
   if (!res.ok) throw new Error("Failed to fetch categories");

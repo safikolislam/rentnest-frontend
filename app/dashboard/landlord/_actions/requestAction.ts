@@ -18,7 +18,7 @@ export const updateRequestStatus = async (
 
   try {
     const res = await fetch(
-      `${process.env.API_URL}/api/landlord/requests/${requestId}`,
+      `${process.env.NEXT_API_URL}/api/landlord/requests/${requestId}`,
       {
         method: "PATCH",
         headers: {

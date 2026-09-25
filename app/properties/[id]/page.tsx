@@ -2,30 +2,67 @@ import { getPropertyById } from "@/lib/api/properties";
 import Image from "next/image";
 import { MapPin, Mail } from "lucide-react";
 import RequestRentalButton from "@/components/property/RequestRentalButton";
+import PropertyReviews from "@/components/review/PropertyReviews";
+import { IPropertyWithReviews } from "@/lib/types";
 
 type PageProps = {
   params: Promise<{ id: string }>;
 };
 
+const isValidImageUrl = (url: string) => {
+  return url?.startsWith("http://") || url?.startsWith("https://") || url?.startsWith("/");
+};
+
+// আলাদাভাবে রিভিউ ফেচ করার ফাংশন
+async function getReviewsByPropertyId(propertyId: string) {
+  try {
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "https://rentnest-backend-chi.vercel.app/api";
+    const res = await fetch(`${backendUrl}/reviews/${propertyId}`, {
+      cache: "no-store",
+    });
+    const result = await res.json();
+    return result.data || [];
+  } catch (error) {
+    console.error("Failed to fetch reviews:", error);
+    return [];
+  }
+}
+
 const PropertyDetailsPage = async ({ params }: PageProps) => {
   const { id } = await params;
-  const { data: property } = await getPropertyById(id);
+
+  // প্রপার্টি এবং রিভিউ ডেটা একসাথে ফেচ করা হচ্ছে
+  const [res, reviews] = await Promise.all([
+    getPropertyById(id),
+    getReviewsByPropertyId(id),
+  ]);
+
+  const property: IPropertyWithReviews = res.data;
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
-     
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        {property.images.map((img, i) => (
-          <div key={i} className="relative w-full h-72 rounded-xl overflow-hidden">
-            <Image src={img} alt={`${property.title} ${i + 1}`} fill className="object-cover" />
-          </div>
-        ))}
+        {property.images.map((img: string, i: number) => {
+          const imageSrc = isValidImageUrl(img)
+            ? img
+            : "https://via.placeholder.com/600x400?text=No+Image+Available";
+
+          return (
+            <div key={i} className="relative w-full h-72 rounded-xl overflow-hidden">
+              <Image
+                src={imageSrc}
+                alt={`${property.title} ${i + 1}`}
+                fill
+                className="object-cover"
+              />
+            </div>
+          );
+        })}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-       
-        <div className="md:col-span-2 space-y-4">
-          <div>
+        <div className="md:col-span-2 space-y-6">
+          <div className="space-y-2">
             <span className="text-xs px-2 py-1 bg-primary/10 text-primary rounded-full">
               {property.category.name}
             </span>
@@ -41,7 +78,7 @@ const PropertyDetailsPage = async ({ params }: PageProps) => {
           <div>
             <h3 className="font-semibold mb-2">Amenities</h3>
             <div className="flex flex-wrap gap-2">
-              {property.amenities.map((amenity) => (
+              {property.amenities.map((amenity: string) => (
                 <span
                   key={amenity}
                   className="text-sm px-3 py-1 bg-muted rounded-full text-muted-foreground"
@@ -60,15 +97,17 @@ const PropertyDetailsPage = async ({ params }: PageProps) => {
               <span>{property.landlord.email}</span>
             </div>
           </div>
+
+          {/* আলাদা ফেচ করা রিভিউগুলো এখানে পাস করা হলো */}
+          <PropertyReviews reviews={reviews} />
         </div>
 
-      
         <div className="border rounded-xl p-5 h-fit sticky top-20 space-y-4">
           <p className="text-2xl font-bold">
             ৳{property.price.toLocaleString()}
             <span className="text-sm font-normal text-muted-foreground"> /month</span>
           </p>
-      <RequestRentalButton propertyId= {property.id} ></RequestRentalButton>
+          <RequestRentalButton propertyId={property.id} />
         </div>
       </div>
     </div>

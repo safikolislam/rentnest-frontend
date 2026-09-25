@@ -1,3 +1,4 @@
+
 import Image from "next/image";
 import Link from "next/link";
 
@@ -7,11 +8,14 @@ const Hero = () => {
       <section className="relative py-20 px-4 text-center overflow-hidden">
       
         <div className="absolute inset-0 -z-10">
-          <Image 
-            src="/assets/house-rent-hero.jpg" 
+          <Image
+            src="/assets/houseRent.jpg"
             alt="Hero background" 
-            fill 
             priority
+            unoptimized
+            fill 
+           
+         
             className="object-cover object-center"
           />
     

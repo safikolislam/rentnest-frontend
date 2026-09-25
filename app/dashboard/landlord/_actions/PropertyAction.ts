@@ -13,7 +13,7 @@ export const createProperty = async (
   const token = cookieStore.get("accessToken")?.value;
 
   try {
-    const res = await fetch(`${process.env.API_URL}/api/properties`, {
+    const res = await fetch(`${process.env.NEXT_API_URL}/api/properties`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

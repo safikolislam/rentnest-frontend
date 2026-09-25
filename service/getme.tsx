@@ -14,7 +14,7 @@ export const getMe = async () => {
     }
 
     try {
-        const res = await fetch(`${process.env.API_URL}/api/auth/me`, {
+        const res = await fetch(`${process.env.NEXT_API_URL}/api/auth/me`, {
             method: "GET",
             headers: {
             

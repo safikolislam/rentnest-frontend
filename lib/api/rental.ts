@@ -11,12 +11,12 @@ export async function getMyRentalRequests() {
   const token = cookieStore.get("accessToken")?.value;
 
   if (!token) {
-    console.error("No access token found in cookies");
+   
     return { success: false, data: [] };
   }
 
   try {
-    const res = await fetch(`${process.env.API_URL}/api/rentals`, {
+    const res = await fetch(`${process.env.NEXT_API_URL}/api/rentals`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

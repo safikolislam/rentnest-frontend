@@ -2,7 +2,7 @@ import { PropertiesResponse } from "../types";
 
 
 export async function getMyProperties(landlordId: string): Promise<PropertiesResponse> {
-  const res = await fetch(`${process.env.API_URL}/api/properties`, {
+  const res = await fetch(`${process.env.NEXT_API_URL}/api/properties`, {
     cache: "no-store",
   });
 
