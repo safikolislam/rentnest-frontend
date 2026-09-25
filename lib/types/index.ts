@@ -8,4 +8,6 @@ export * from "./property.types";
 
 export * from "./payment.types";
 
-export * from "./review.types"
+export * from "./review.types";
+
+export * from "./admin.types"
