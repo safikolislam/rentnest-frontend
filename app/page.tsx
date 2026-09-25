@@ -1,13 +1,12 @@
-
 import Hero from "@/components/Hero";
 import { PropertiesResponse, Property } from "@/lib/types/property.types";
 import Image from "next/image";
 import Link from "next/link";
-;
 
 async function getFeaturedProperties(): Promise<Property[]> {
   try {
-    const res = await fetch(`${process.env.NEXT_API_URL}/api/properties`, {
+    const baseUrl = process.env.NEXT_API_URL || "https://rentnest-backend-chi.vercel.app/api";
+    const res = await fetch(`${baseUrl}/properties`, {
       cache: "no-store",
     });
 
@@ -51,9 +50,11 @@ export default async function Home() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {featuredProperties.map((property) => {
+                // নিরাপদ ইমেজ চেক: যদি প্রথম ইমেজটি ভ্যালিড না হয় তবে ডিফল্ট ইমেজ দেখাবে
+                const firstImg = property.images?.[0];
                 const imageUrl =
-                  property.images?.length > 0
-                    ? property.images[0]
+                  firstImg && typeof firstImg === "string" && firstImg.trim() !== ""
+                    ? firstImg
                     : "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80";
 
                 return (
@@ -65,7 +66,7 @@ export default async function Home() {
                       <Image
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         src={imageUrl}
-                        alt={property.title}
+                        alt={property.title || "Property image"}
                         fill
                         className="object-cover"
                       />
@@ -79,7 +80,7 @@ export default async function Home() {
                           {property.title}
                         </h3>
                         <span className="text-lg font-bold text-blue-600 dark:text-blue-400 whitespace-nowrap">
-                          ৳{property.price.toLocaleString()}
+                          ৳{property.price?.toLocaleString()}
                           <span className="text-xs text-slate-500">/mo</span>
                         </span>
                       </div>

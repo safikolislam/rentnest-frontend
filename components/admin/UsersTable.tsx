@@ -4,8 +4,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Ban, CheckCircle, Search } from "lucide-react";
-import { AdminUser } from "@/types";
+
 import { updateUserStatus } from "@/app/dashboard/admin/_actions/userAction";
+import { AdminUser } from "@/lib/types";
 
 const UsersTable = ({ users }: { users: AdminUser[] }) => {
   const router = useRouter();

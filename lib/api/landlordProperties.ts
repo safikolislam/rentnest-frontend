@@ -24,7 +24,7 @@ export async function getMyProperties(landlordId: string): Promise<PropertiesRes
     const result: PropertiesResponse = await res.json();
     const allProperties = result.data || [];
 
-    // যদি landlordId না পাওয়া যায়, তবে সব প্রপার্টি রিটার্ন করবে অথবা আইডি মিললে ফিল্টার করবে
+ 
     const filteredData = !landlordId
       ? allProperties
       : allProperties.filter((p: any) => {
