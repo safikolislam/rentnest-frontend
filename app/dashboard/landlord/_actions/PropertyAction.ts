@@ -14,7 +14,6 @@ const getToken = async () => {
   return cookieStore.get("accessToken")?.value || cookieStore.get("token")?.value;
 };
 
-
 export const getLandlordProperties = async () => {
   const token = await getToken();
   const baseUrl = getBackendUrl();
@@ -41,7 +40,6 @@ export const getLandlordProperties = async () => {
   }
 };
 
-
 export const createProperty = async (payload: CreatePropertyPayload) => {
   const token = await getToken();
   const baseUrl = getBackendUrl();
@@ -51,7 +49,7 @@ export const createProperty = async (payload: CreatePropertyPayload) => {
   }
 
   try {
-    const res = await fetch(`${baseUrl}/properties`, {
+    const res = await fetch(`${baseUrl}/landlord/properties`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -71,7 +69,6 @@ export const createProperty = async (payload: CreatePropertyPayload) => {
   }
 };
 
-
 export const updateProperty = async (propertyId: string, payload: UpdatePropertyPayload) => {
   const token = await getToken();
   const baseUrl = getBackendUrl();
@@ -81,8 +78,8 @@ export const updateProperty = async (propertyId: string, payload: UpdateProperty
   }
 
   try {
-    const res = await fetch(`${baseUrl}/properties/${propertyId}`, {
-      method: "PATCH",
+    const res = await fetch(`${baseUrl}/landlord/properties/${propertyId}`, {
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
@@ -101,7 +98,6 @@ export const updateProperty = async (propertyId: string, payload: UpdateProperty
   }
 };
 
-
 export const deleteProperty = async (propertyId: string) => {
   const token = await getToken();
   const baseUrl = getBackendUrl();
@@ -111,7 +107,7 @@ export const deleteProperty = async (propertyId: string) => {
   }
 
   try {
-    const res = await fetch(`${baseUrl}/properties/${propertyId}`, {
+    const res = await fetch(`${baseUrl}/landlord/properties/${propertyId}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`,
