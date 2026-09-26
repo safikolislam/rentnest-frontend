@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 
-const PaymentSuccessPage = () => {
+const PaymentSuccessContent = () => {
   const searchParams = useSearchParams();
   const rentalRequestId = searchParams.get("rentalRequestId");
 
@@ -35,6 +35,14 @@ const PaymentSuccessPage = () => {
         Go to Dashboard
       </Link>
     </div>
+  );
+};
+
+const PaymentSuccessPage = () => {
+  return (
+    <Suspense fallback={<div className="text-center py-20">Loading payment details...</div>}>
+      <PaymentSuccessContent />
+    </Suspense>
   );
 };
 

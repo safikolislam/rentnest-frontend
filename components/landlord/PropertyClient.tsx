@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Plus, Pencil, Trash2 } from "lucide-react";
-import { toast } from "sonner";
+
 import Swal from "sweetalert2";
 import { Category, Property } from "@/lib/types";
 import { deleteProperty } from "@/app/dashboard/landlord/_actions/PropertyAction";

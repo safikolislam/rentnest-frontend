@@ -2,19 +2,53 @@
 
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
-import { CreatePropertyPayload, DeletePropertyResponse, PropertyMutationResponse, UpdatePropertyPayload } from "@/lib/types";
-
+import { CreatePropertyPayload, UpdatePropertyPayload } from "@/lib/types";
 
 const getBackendUrl = () => {
-  return "https://rentnest-backend-chi.vercel.app/api";
+  const baseUrl = process.env.NEXT_API_URL || "https://rentnest-backend-chi.vercel.app";
+  return baseUrl.endsWith("/api") ? baseUrl : `${baseUrl}/api`;
 };
 
-export const createProperty = async (
-  payload: CreatePropertyPayload
-): Promise<PropertyMutationResponse> => {
+const getToken = async () => {
   const cookieStore = await cookies();
-  const token = cookieStore.get("accessToken")?.value;
+  return cookieStore.get("accessToken")?.value || cookieStore.get("token")?.value;
+};
+
+
+export const getLandlordProperties = async () => {
+  const token = await getToken();
   const baseUrl = getBackendUrl();
+
+  if (!token) {
+    return { success: false, statusCode: 401, message: "Unauthorized: No token found", data: [] };
+  }
+
+  try {
+    const res = await fetch(`${baseUrl}/properties/my-properties`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      cache: "no-store",
+    });
+
+    const result = await res.json();
+    return result;
+  } catch (error) {
+    console.log("Get landlord properties failed:", error);
+    return { success: false, statusCode: 500, message: "Something went wrong", data: [] };
+  }
+};
+
+
+export const createProperty = async (payload: CreatePropertyPayload) => {
+  const token = await getToken();
+  const baseUrl = getBackendUrl();
+
+  if (!token) {
+    return { success: false, statusCode: 401, message: "Unauthorized" };
+  }
 
   try {
     const res = await fetch(`${baseUrl}/properties`, {
@@ -26,8 +60,10 @@ export const createProperty = async (
       body: JSON.stringify(payload),
     });
 
-    const result: PropertyMutationResponse = await res.json();
-    if (result.success) revalidatePath("/dashboard/landlord/properties");
+    const result = await res.json();
+    if (result.success) {
+      revalidatePath("/dashboard/landlord/properties");
+    }
     return result;
   } catch (error) {
     console.log("Create property failed:", error);
@@ -35,19 +71,18 @@ export const createProperty = async (
   }
 };
 
-export const updateProperty = async (
-  propertyId: string,
-  payload: UpdatePropertyPayload
-): Promise<PropertyMutationResponse> => {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("accessToken")?.value;
+
+export const updateProperty = async (propertyId: string, payload: UpdatePropertyPayload) => {
+  const token = await getToken();
   const baseUrl = getBackendUrl();
 
+  if (!token) {
+    return { success: false, statusCode: 401, message: "Unauthorized" };
+  }
+
   try {
-    
-    let url = `${baseUrl}/landlord/properties/${propertyId}`;
-    let res = await fetch(url, {
-      method: "PUT",
+    const res = await fetch(`${baseUrl}/properties/${propertyId}`, {
+      method: "PATCH",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
@@ -55,21 +90,10 @@ export const updateProperty = async (
       body: JSON.stringify(payload),
     });
 
-  
-    if (res.status === 404) {
-      url = `${baseUrl}/properties/${propertyId}`;
-      res = await fetch(url, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(payload),
-      });
+    const result = await res.json();
+    if (result.success) {
+      revalidatePath("/dashboard/landlord/properties");
     }
-
-    const result: PropertyMutationResponse = await res.json();
-    if (result.success) revalidatePath("/dashboard/landlord/properties");
     return result;
   } catch (error) {
     console.log("Update property failed:", error);
@@ -77,32 +101,27 @@ export const updateProperty = async (
   }
 };
 
-export const deleteProperty = async (propertyId: string): Promise<DeletePropertyResponse> => {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("accessToken")?.value;
+
+export const deleteProperty = async (propertyId: string) => {
+  const token = await getToken();
   const baseUrl = getBackendUrl();
 
+  if (!token) {
+    return { success: false, statusCode: 401, message: "Unauthorized" };
+  }
+
   try {
-    let url = `${baseUrl}/landlord/properties/${propertyId}`;
-    let res = await fetch(url, {
+    const res = await fetch(`${baseUrl}/properties/${propertyId}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
 
-    if (res.status === 404) {
-      url = `${baseUrl}/properties/${propertyId}`;
-      res = await fetch(url, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+    const result = await res.json();
+    if (result.success) {
+      revalidatePath("/dashboard/landlord/properties");
     }
-
-    const result: DeletePropertyResponse = await res.json();
-    if (result.success) revalidatePath("/dashboard/landlord/properties");
     return result;
   } catch (error) {
     console.log("Delete property failed:", error);

@@ -1,6 +1,7 @@
 
 "use client";
 
+
 import { createProperty, updateProperty } from "@/app/dashboard/landlord/_actions/PropertyAction";
 import { Category, Property } from "@/lib/types";
 import { useState } from "react";

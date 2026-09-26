@@ -1,43 +1,58 @@
 import { cookies } from "next/headers";
 import { PropertiesResponse } from "../types";
 
-export async function getMyProperties(landlordId: string): Promise<PropertiesResponse> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("accessToken")?.value;
-
-  const baseUrl = process.env.NEXT_API_URL || process.env.API_URL || "https://rentnest-backend-chi.vercel.app/api";
-  const endpoint = baseUrl.endsWith("/api") ? `${baseUrl}/properties` : `${baseUrl}/api/properties`;
-
+export async function getMyProperties(): Promise<PropertiesResponse> {
   try {
+    const cookieStore = await cookies();
+
+   
+    const token = cookieStore.get("accessToken")?.value || cookieStore.get("token")?.value;
+
+
+
+    if (!token) {
+      return {
+        success: false,
+        statusCode: 401,
+        message: "No token found, please login again",
+        data: []
+      } as unknown as PropertiesResponse;
+    }
+
+    const baseUrl = process.env.NEXT_API_URL || process.env.API_URL || "https://rentnest-backend-chi.vercel.app/api";
+    const endpoint = baseUrl.endsWith("/api")
+      ? `${baseUrl}/properties/my-properties`
+      : `${baseUrl}/api/properties/my-properties`;
+
     const res = await fetch(endpoint, {
       method: "GET",
       headers: {
-        Authorization: token ? `Bearer ${token}` : "",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
       cache: "no-store",
     });
 
     if (!res.ok) {
-      throw new Error(`Failed to fetch properties: ${res.statusText}`);
+   
+      
+      return {
+        success: false,
+        statusCode: res.status,
+        message: "Failed to fetch properties",
+        data: []
+      } as unknown as PropertiesResponse;
     }
 
     const result: PropertiesResponse = await res.json();
-    const allProperties = result.data || [];
-
- 
-    const filteredData = !landlordId
-      ? allProperties
-      : allProperties.filter((p: any) => {
-        const propertyLandlordId = p.landlordId || p.landlord?.id || p.landlord;
-        return propertyLandlordId === landlordId;
-      });
-
-    return {
-      ...result,
-      data: filteredData,
-    };
+    return result;
   } catch (error) {
-    console.error("Error in getMyProperties:", error);
-    return { success: false, statusCode: 500, message: "Failed to fetch properties", data: [] } as any;
+    console.error("Error in getMyProperties catch block:", error);
+    return {
+      success: false,
+      statusCode: 500,
+      message: "Something went wrong",
+      data: []
+    } as unknown as PropertiesResponse;
   }
 }
