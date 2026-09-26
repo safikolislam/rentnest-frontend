@@ -1,19 +1,34 @@
 import Hero from "@/components/Hero";
-import { PropertiesResponse, Property } from "@/lib/types/property.types";
+import { Property } from "@/lib/types/property.types";
 import Image from "next/image";
 import Link from "next/link";
 
 async function getFeaturedProperties(): Promise<Property[]> {
+  const baseUrl = "https://rentnest-backend-chi.vercel.app/api";
+
   try {
-    const baseUrl = process.env.NEXT_API_URL || "https://rentnest-backend-chi.vercel.app/api";
-    const res = await fetch(`${baseUrl}/properties`, {
+    let res = await fetch(`${baseUrl}/properties`, {
       cache: "no-store",
     });
 
+    // যদি /properties এ 404 দেয়, তবে বিকল্প রুটে চেষ্টা করবে
+    if (res.status === 404) {
+      res = await fetch(`${baseUrl}/all-properties`, {
+        cache: "no-store",
+      });
+    }
+
     if (!res.ok) return [];
 
-    const data: PropertiesResponse = await res.json();
-    return data?.data || [];
+    const data = await res.json();
+
+    // ডেটা যে ফরম্যাটেই আসুক না কেন, তা নিরাপদে এক্সট্রাক্ট করা হচ্ছে
+    if (Array.isArray(data)) return data;
+    if (Array.isArray(data?.data)) return data.data;
+    if (Array.isArray(data?.result)) return data.result;
+    if (Array.isArray(data?.data?.result)) return data.data.result;
+
+    return [];
   } catch (error) {
     console.error("Error fetching properties:", error);
     return [];
@@ -49,17 +64,22 @@ export default async function Home() {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {featuredProperties.map((property) => {
-                // নিরাপদ ইমেজ চেক: যদি প্রথম ইমেজটি ভ্যালিড না হয় তবে ডিফল্ট ইমেজ দেখাবে
-                const firstImg = property.images?.[0];
-                const imageUrl =
-                  firstImg && typeof firstImg === "string" && firstImg.trim() !== ""
-                    ? firstImg
-                    : "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80";
+              {featuredProperties.map((property: any) => {
+                // ইমেজ সেফটি চেক
+                const rawImg = property.images?.[0];
+                let imageUrl = "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80";
+
+                if (typeof rawImg === "string" && rawImg.trim() !== "") {
+                  imageUrl = rawImg;
+                } else if (rawImg && typeof rawImg === "object") {
+                  imageUrl = rawImg.url || rawImg.secure_url || rawImg.path || imageUrl;
+                }
+
+                const propertyId = property.id || property._id;
 
                 return (
                   <div
-                    key={property.id}
+                    key={propertyId}
                     className="bg-white dark:bg-slate-900 rounded-xl overflow-hidden shadow-sm border border-slate-200 dark:border-slate-800 hover:shadow-md transition"
                   >
                     <div className="relative w-full h-48">
@@ -69,9 +89,10 @@ export default async function Home() {
                         alt={property.title || "Property image"}
                         fill
                         className="object-cover"
+                        unoptimized
                       />
                       <span className="absolute top-2 left-2 bg-blue-600 text-white text-xs px-2 py-1 rounded-full">
-                        {property.category?.name}
+                        {property.category?.name || property.category}
                       </span>
                     </div>
                     <div className="p-5 space-y-3">
@@ -89,7 +110,7 @@ export default async function Home() {
                       </p>
 
                       <div className="flex flex-wrap gap-1 pt-2 border-t border-slate-100 dark:border-slate-800">
-                        {property.amenities?.slice(0, 3).map((amenity) => (
+                        {property.amenities?.slice(0, 3).map((amenity: string) => (
                           <span
                             key={amenity}
                             className="text-xs px-2 py-0.5 bg-slate-100 dark:bg-slate-800 rounded-full text-slate-600 dark:text-slate-400"
@@ -100,7 +121,7 @@ export default async function Home() {
                       </div>
 
                       <Link
-                        href={`/properties/${property.id}`}
+                        href={`/properties/${propertyId}`}
                         className="block text-center w-full mt-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-medium rounded-lg hover:bg-blue-600 hover:text-white transition"
                       >
                         View Details

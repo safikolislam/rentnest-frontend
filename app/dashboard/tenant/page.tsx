@@ -52,6 +52,7 @@ export default async function TenantDashboard({ searchParams }: TenantDashboardP
                       alt={request.property?.title || "Property"}
                       fill
                       className="object-cover"
+                      unoptimized
                     />
                   </div>
 
