@@ -11,7 +11,11 @@ const PaymentSuccessContent = () => {
   const rentalRequestId = searchParams.get("rentalRequestId");
 
   useEffect(() => {
-    toast.success("Payment completed successfully!");
+    const timer = setTimeout(() => {
+      toast.success("Payment completed successfully!");
+    }, 100); 
+
+    return () => clearTimeout(timer);
   }, []);
 
   return (
