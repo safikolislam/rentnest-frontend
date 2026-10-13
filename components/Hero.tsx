@@ -4,50 +4,44 @@ import Link from "next/link";
 
 const Hero = () => {
   return (
-    <div>
-      <section className="relative py-20 px-4 text-center overflow-hidden">
-      
-        <div className="absolute inset-0 -z-10">
-          <Image
-            src="/houseRent.jpg"
-            alt="Hero background" 
-            priority
-            unoptimized
-            fill 
-           
-         
-            className="object-cover object-center"
-          />
-    
-          <div className="absolute inset-0 bg-black/60" />
-        </div>
+    <section className="relative isolate overflow-hidden px-4 py-20 text-center">
+      <Image
+        src="/houseRent.jpg"
+        alt="Hero background"
+        unoptimized
+        priority
+        fill
+        loading="eager"
+        sizes="100vw"
+        className="-z-20 object-cover object-center"
+      />
+      <div className="absolute inset-0 -z-10 bg-black/60" />
 
-  
-        <div className="max-w-4xl mx-auto space-y-6 relative z-10 text-white">
-          <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight">
-            Find Your Dream Rental Home
-          </h1>
-          <p className="text-lg md:text-xl text-blue-100 max-w-2xl mx-auto">
-            Discover verified rental listings, connect with top landlords, and book your home with ease.
-          </p>
+      <div className="relative mx-auto max-w-4xl space-y-6 text-white">
+        <h1 className="text-4xl font-extrabold tracking-tight md:text-6xl">
+          Find Your Dream Rental Home
+        </h1>
+        <p className="mx-auto max-w-2xl text-lg text-blue-100 md:text-xl">
+          Discover verified rental listings, connect with top landlords, and
+          book your home with ease.
+        </p>
 
-          <div className="flex justify-center gap-4 pt-4">
-            <Link
-              href="/properties"
-              className="px-6 py-3 bg-white text-blue-600 font-semibold rounded-lg shadow hover:bg-slate-100 transition"
-            >
-              Browse Properties
-            </Link>
-            <Link
-              href="/auth/register"
-              className="px-6 py-3 bg-blue-700 text-white font-semibold rounded-lg border border-blue-500 hover:bg-blue-800 transition"
-            >
-              List Your Property
-            </Link>
-          </div>
+        <div className="flex justify-center gap-4 pt-4">
+          <Link
+            href="/properties"
+            className="rounded-lg bg-white px-6 py-3 font-semibold text-blue-600 shadow transition hover:bg-slate-100"
+          >
+            Browse Properties
+          </Link>
+          <Link
+            href="/auth/register"
+            className="rounded-lg border border-blue-500 bg-blue-700 px-6 py-3 font-semibold text-white transition hover:bg-blue-800"
+          >
+            List Your Property
+          </Link>
         </div>
-      </section>
-    </div>
+      </div>
+    </section>
   );
 };
 
