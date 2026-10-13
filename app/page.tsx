@@ -22,7 +22,7 @@ async function getFeaturedProperties(): Promise<Property[]> {
 
     const data = await res.json();
 
-    // ডেটা যে ফরম্যাটেই আসুক না কেন, তা নিরাপদে এক্সট্রাক্ট করা হচ্ছে
+  
     if (Array.isArray(data)) return data;
     if (Array.isArray(data?.data)) return data.data;
     if (Array.isArray(data?.result)) return data.result;
@@ -65,7 +65,7 @@ export default async function Home() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {featuredProperties.map((property: any) => {
-                // ইমেজ সেফটি চেক
+          
                 const rawImg = property.images?.[0];
                 let imageUrl = "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80";
 
