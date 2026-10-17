@@ -1,3 +1,4 @@
+import Faq from "@/components/Faq";
 import Hero from "@/components/Hero";
 import { Property } from "@/lib/types/property.types";
 import Image from "next/image";
@@ -11,7 +12,7 @@ async function getFeaturedProperties(): Promise<Property[]> {
       cache: "no-store",
     });
 
-    // যদি /properties এ 404 দেয়, তবে বিকল্প রুটে চেষ্টা করবে
+  
     if (res.status === 404) {
       res = await fetch(`${baseUrl}/all-properties`, {
         cache: "no-store",
@@ -133,6 +134,7 @@ export default async function Home() {
             </div>
           )}
         </section>
+        <Faq></Faq>
       </div>
     </>
   );
