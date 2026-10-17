@@ -4,12 +4,17 @@ export interface IReview {
   comment: string;
   propertyId: string;
   userId: string;
+  tenantId?: string;
   createdAt: string;
   user?: {
     id: string;
     name: string;
     email?: string;
     avatar?: string;
+  };
+  tenant?: {
+    id: string;
+    name: string;
   };
 }
 
